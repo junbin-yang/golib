@@ -127,28 +127,33 @@ func OpenLogChannel() {
 			item := itemInterface.(map[string]interface{})
 			m := fmt.Sprint(item["Data"])
 			if item["Type"] == "Info" {
-				obj.WithFields(map[string]interface{}{"Func": item["Func"], "File": item["File"], "Line": item["Line"], "GID": item["GID"]}).Info(m[1:(len(m) - 1)])
+				obj.WithFields(map[string]interface{}{"Func": item["Func"], "File": item["File"], "Line": item["Line"], "GID": item["GID"]}).Info(m)
 			}
 			if item["Type"] == "Debug" {
-				obj.WithFields(map[string]interface{}{"Func": item["Func"], "File": item["File"], "Line": item["Line"], "GID": item["GID"]}).Debug(m[1:(len(m) - 1)])
+				obj.WithFields(map[string]interface{}{"Func": item["Func"], "File": item["File"], "Line": item["Line"], "GID": item["GID"]}).Debug(m)
 			}
 			if item["Type"] == "Error" {
-				obj.WithFields(map[string]interface{}{"Func": item["Func"], "File": item["File"], "Line": item["Line"], "GID": item["GID"]}).Error(m[1:(len(m) - 1)])
+				obj.WithFields(map[string]interface{}{"Func": item["Func"], "File": item["File"], "Line": item["Line"], "GID": item["GID"]}).Error(m)
 			}
 			if item["Type"] == "Warn" {
-				obj.WithFields(map[string]interface{}{"Func": item["Func"], "File": item["File"], "Line": item["Line"], "GID": item["GID"]}).Warn(m[1:(len(m) - 1)])
+				obj.WithFields(map[string]interface{}{"Func": item["Func"], "File": item["File"], "Line": item["Line"], "GID": item["GID"]}).Warn(m)
 			}
 			if item["Type"] == "Fatal" {
-				obj.WithFields(map[string]interface{}{"Func": item["Func"], "File": item["File"], "Line": item["Line"], "GID": item["GID"]}).Fatal(m[1:(len(m) - 1)])
+				obj.WithFields(map[string]interface{}{"Func": item["Func"], "File": item["File"], "Line": item["Line"], "GID": item["GID"]}).Fatal(m)
 			}
 		}
 	}
 }
 
 func Info(o ...interface{}) {
+	m := ""
+	for _, v := range o {
+		m += fmt.Sprint(v) + " "
+	}
+
 	msg := map[string]interface{}{
 		"Type": "Info",
-		"Data": o,
+		"Data": m,
 	}
 
 	if obj.GetLevel() == logrus.DebugLevel {
@@ -161,15 +166,19 @@ func Info(o ...interface{}) {
 	if channelSwitch {
 		defaultChannel.Push(msg)
 	} else {
-		m := fmt.Sprint(o...)
-		obj.WithFields(map[string]interface{}{"Func": msg["Func"], "File": msg["File"], "Line": msg["Line"], "GID": msg["GID"]}).Info(m[1:(len(m) - 1)])
+		obj.WithFields(map[string]interface{}{"Func": msg["Func"], "File": msg["File"], "Line": msg["Line"], "GID": msg["GID"]}).Info(m)
 	}
 }
 
 func Debug(o ...interface{}) {
+	m := ""
+	for _, v := range o {
+		m += fmt.Sprint(v) + " "
+	}
+
 	msg := map[string]interface{}{
 		"Type": "Debug",
-		"Data": o,
+		"Data": m,
 	}
 
 	if obj.GetLevel() == logrus.DebugLevel {
@@ -182,15 +191,19 @@ func Debug(o ...interface{}) {
 	if channelSwitch {
 		defaultChannel.Push(msg)
 	} else {
-		m := fmt.Sprint(o...)
-		obj.WithFields(map[string]interface{}{"Func": msg["Func"], "File": msg["File"], "Line": msg["Line"], "GID": msg["GID"]}).Info(m[1:(len(m) - 1)])
+		obj.WithFields(map[string]interface{}{"Func": msg["Func"], "File": msg["File"], "Line": msg["Line"], "GID": msg["GID"]}).Debug(m)
 	}
 }
 
 func Error(o ...interface{}) {
+	m := ""
+	for _, v := range o {
+		m += fmt.Sprint(v) + " "
+	}
+
 	msg := map[string]interface{}{
 		"Type": "Error",
-		"Data": o,
+		"Data": m,
 	}
 
 	if obj.GetLevel() == logrus.DebugLevel {
@@ -203,15 +216,23 @@ func Error(o ...interface{}) {
 	if channelSwitch {
 		defaultChannel.Push(msg)
 	} else {
-		m := fmt.Sprint(o...)
-		obj.WithFields(map[string]interface{}{"Func": msg["Func"], "File": msg["File"], "Line": msg["Line"], "GID": msg["GID"]}).Info(m[1:(len(m) - 1)])
+		m := ""
+		for _, v := range o {
+			m += fmt.Sprint(v) + " "
+		}
+		obj.WithFields(map[string]interface{}{"Func": msg["Func"], "File": msg["File"], "Line": msg["Line"], "GID": msg["GID"]}).Error(m)
 	}
 }
 
 func Warn(o ...interface{}) {
+	m := ""
+	for _, v := range o {
+		m += fmt.Sprint(v) + " "
+	}
+
 	msg := map[string]interface{}{
 		"Type": "Warn",
-		"Data": o,
+		"Data": m,
 	}
 
 	if obj.GetLevel() == logrus.DebugLevel {
@@ -224,15 +245,23 @@ func Warn(o ...interface{}) {
 	if channelSwitch {
 		defaultChannel.Push(msg)
 	} else {
-		m := fmt.Sprint(o...)
-		obj.WithFields(map[string]interface{}{"Func": msg["Func"], "File": msg["File"], "Line": msg["Line"], "GID": msg["GID"]}).Info(m[1:(len(m) - 1)])
+		m := ""
+		for _, v := range o {
+			m += fmt.Sprint(v) + " "
+		}
+		obj.WithFields(map[string]interface{}{"Func": msg["Func"], "File": msg["File"], "Line": msg["Line"], "GID": msg["GID"]}).Warn(m)
 	}
 }
 
 func Fatal(o ...interface{}) {
+	m := ""
+	for _, v := range o {
+		m += fmt.Sprint(v) + " "
+	}
+
 	msg := map[string]interface{}{
 		"Type": "Fatal",
-		"Data": o,
+		"Data": m,
 	}
 
 	if obj.GetLevel() == logrus.DebugLevel {
@@ -249,8 +278,11 @@ func Fatal(o ...interface{}) {
 			os.Exit(0)
 		}
 	} else {
-		m := fmt.Sprint(o...)
-		obj.WithFields(map[string]interface{}{"Func": msg["Func"], "File": msg["File"], "Line": msg["Line"], "GID": msg["GID"]}).Info(m[1:(len(m) - 1)])
+		m := ""
+		for _, v := range o {
+			m += fmt.Sprint(v) + " "
+		}
+		obj.WithFields(map[string]interface{}{"Func": msg["Func"], "File": msg["File"], "Line": msg["Line"], "GID": msg["GID"]}).Fatal(m)
 		os.Exit(0)
 	}
 }
