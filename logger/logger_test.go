@@ -11,11 +11,9 @@ func Test_LOG(t *testing.T) {
 	// 是否开启日志通道，开启后日志输出为异步操作。写web服务时开启。
 	//go OpenLogChannel()
 
-	logger.Info(1, "ha")
-	logger.Debug("debugtest")
-	logger.Warn("Warn")
-	//logger.SetLogLevel(INFO)
-	logger.Error("Error")
-	logger.Fatal("Fatal")
-
+	Info(1, "ha")
+	Debug("debugtest")
+	Warn("Warn")
+	//SetLogLevel(INFO)
+	Error("Error")
 }

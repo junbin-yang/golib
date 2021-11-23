@@ -161,7 +161,7 @@ func Info(o ...interface{}) {
 	if channelSwitch {
 		defaultChannel.Push(msg)
 	} else {
-		m := fmt.Sprint(o)
+		m := fmt.Sprint(o...)
 		obj.WithFields(map[string]interface{}{"Func": msg["Func"], "File": msg["File"], "Line": msg["Line"], "GID": msg["GID"]}).Info(m[1:(len(m) - 1)])
 	}
 }
@@ -182,7 +182,7 @@ func Debug(o ...interface{}) {
 	if channelSwitch {
 		defaultChannel.Push(msg)
 	} else {
-		m := fmt.Sprint(o)
+		m := fmt.Sprint(o...)
 		obj.WithFields(map[string]interface{}{"Func": msg["Func"], "File": msg["File"], "Line": msg["Line"], "GID": msg["GID"]}).Info(m[1:(len(m) - 1)])
 	}
 }
@@ -203,7 +203,7 @@ func Error(o ...interface{}) {
 	if channelSwitch {
 		defaultChannel.Push(msg)
 	} else {
-		m := fmt.Sprint(o)
+		m := fmt.Sprint(o...)
 		obj.WithFields(map[string]interface{}{"Func": msg["Func"], "File": msg["File"], "Line": msg["Line"], "GID": msg["GID"]}).Info(m[1:(len(m) - 1)])
 	}
 }
@@ -224,7 +224,7 @@ func Warn(o ...interface{}) {
 	if channelSwitch {
 		defaultChannel.Push(msg)
 	} else {
-		m := fmt.Sprint(o)
+		m := fmt.Sprint(o...)
 		obj.WithFields(map[string]interface{}{"Func": msg["Func"], "File": msg["File"], "Line": msg["Line"], "GID": msg["GID"]}).Info(m[1:(len(m) - 1)])
 	}
 }
@@ -249,7 +249,7 @@ func Fatal(o ...interface{}) {
 			os.Exit(0)
 		}
 	} else {
-		m := fmt.Sprint(o)
+		m := fmt.Sprint(o...)
 		obj.WithFields(map[string]interface{}{"Func": msg["Func"], "File": msg["File"], "Line": msg["Line"], "GID": msg["GID"]}).Info(m[1:(len(m) - 1)])
 		os.Exit(0)
 	}
