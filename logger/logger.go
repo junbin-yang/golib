@@ -277,7 +277,7 @@ type LogFormatter struct{}
 
 //格式详情
 func (s *LogFormatter) Format(entry *logrus.Entry) ([]byte, error) {
-	t := carbon.Now().ToDateString() + "," + fmt.Sprint(time.Now().Nanosecond()/1e6)
+	t := carbon.Now().ToDateTimeString() + "," + fmt.Sprint(time.Now().Nanosecond()/1e6)
 	msg := fmt.Sprintf("%s [%s] %s\n", t, strings.ToUpper(entry.Level.String()), entry.Message)
 	if entry.Data["Func"] != nil {
 		msg = fmt.Sprintf("%s [%s:%d][%s][RTID:%d][%s] %s\n", t, entry.Data["File"], entry.Data["Line"], entry.Data["Func"], entry.Data["GID"], strings.ToUpper(entry.Level.String()), entry.Message)
