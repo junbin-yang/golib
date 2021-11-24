@@ -12,6 +12,7 @@ import (
 	"runtime"
 	"strconv"
 	"strings"
+	"syscall"
 	"time"
 )
 
@@ -61,8 +62,8 @@ func (this *Options) New() {
 			if this.TakeStd {
 				os.Stderr = src
 				os.Stdout = src
-				syscall.Dup3(int(crashFile.Fd()), 2, 0)
-				syscall.Dup3(int(crashFile.Fd()), 1, 0)
+				syscall.Dup3(int(src.Fd()), 2, 0)
+				syscall.Dup3(int(src.Fd()), 1, 0)
 			}
 
 			if this.Rotate {
