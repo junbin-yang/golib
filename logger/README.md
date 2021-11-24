@@ -25,7 +25,7 @@ import (
 func main() {
 	/*
      *	Path：日志存储路径,默认值/var/log；
-     *  Level日志等级：默认INFO；
+     *  Level日志等级；
      *  AppName：文件名前缀；
      *  Rotate是否自动分割日志
      *  TakeStd是否接管Stdout和Stderr
@@ -38,7 +38,7 @@ func main() {
 	// 开启日志异步写入。建议开启。
 	//go logger.Asyn()	
 
-	logger.SetLogLevel(logger.DEBUG)
+	logger.SetLogLevel(logger.InfoLevel)
 	logger.Info(1, "ha")
 	logger.Debug("debugtest")
 	logger.Warn("Warn")
