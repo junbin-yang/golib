@@ -106,17 +106,19 @@ func (this *Options) New() {
 			}
 		} else {
 			fmt.Println("打开日志文件失败:", err)
-			writers := []io.Writer{os.Stdout}
-			fileAndStdoutWriter := io.MultiWriter(writers...)
-			obj.SetOutput(fileAndStdoutWriter)
+			writerStdout()
 		}
-		obj.SetFormatter(new(LogFormatter))
 	} else {
-		writers := []io.Writer{os.Stdout}
-		fileAndStdoutWriter := io.MultiWriter(writers...)
-		obj.SetOutput(fileAndStdoutWriter)
-		obj.SetFormatter(new(LogFormatter))
+		writerStdout()
 	}
+
+	obj.SetFormatter(new(LogFormatter))
+}
+
+func writerStdout() {
+	writers := []io.Writer{os.Stdout}
+	fileAndStdoutWriter := io.MultiWriter(writers...)
+	obj.SetOutput(fileAndStdoutWriter)
 }
 
 func SetLogLevel(level logrus.Level) {
