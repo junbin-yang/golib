@@ -34,6 +34,7 @@ type Options struct {
 	Level    int    //输出级别
 	Rotate   bool
 	KeepDays int64
+	TakeStd  bool
 }
 
 func (this *Options) New() {
@@ -56,7 +57,13 @@ func (this *Options) New() {
 		logfile := this.Path + "/" + this.AppName + "-" + carbon.Now().ToDateString() + ".log"
 		src, err := os.OpenFile(logfile, os.O_APPEND|os.O_WRONLY|os.O_CREATE, os.ModeAppend|0644)
 		if err == nil {
-			obj.Out = src
+			obj.SetOutput(src)
+			if this.TakeStd {
+				os.Stderr = src
+				os.Stdout = src
+				syscall.Dup3(int(crashFile.Fd()), 2, 0)
+				syscall.Dup3(int(crashFile.Fd()), 1, 0)
+			}
 
 			if this.Rotate {
 				go func(Path, AppName string) {
@@ -64,7 +71,7 @@ func (this *Options) New() {
 					c.AddFunc("0 0 0 * * ?", func() {
 						logfile := Path + "/" + AppName + "-" + carbon.Now().ToDateString() + ".log"
 						src, _ := os.OpenFile(logfile, os.O_APPEND|os.O_WRONLY|os.O_CREATE, os.ModeAppend|0644)
-						obj.Out = src
+						obj.SetOutput(src)
 
 						var diff_time int64 = 3600 * 24 * this.KeepDays
 						now_time := time.Now().Unix()
