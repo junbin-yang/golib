@@ -127,7 +127,7 @@ func SetLogLevel(level int) {
 	}
 }
 
-func OpenLogChannel() {
+func Asyn() {
 	channelSwitch = true
 	for {
 		itemInterface := defaultChannel.Pop()
