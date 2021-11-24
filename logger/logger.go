@@ -17,12 +17,24 @@ import (
 )
 
 const (
-	DEBUG = 1
-	INFO  = 2
-	WARN  = 3
-	ERROR = 4
-	FATAL = 5
-	TRACE = 6
+	// PanicLevel level, highest level of severity. Logs and then calls panic with the
+	// message passed to Debug, Info, ...
+	PanicLevel logrus.Level = iota
+	// FatalLevel level. Logs and then calls `logger.Exit(1)`. It will exit even if the
+	// logging level is set to Panic.
+	FatalLevel
+	// ErrorLevel level. Logs. Used for errors that should definitely be noted.
+	// Commonly used for hooks to send errors to an error tracking service.
+	ErrorLevel
+	// WarnLevel level. Non-critical entries that deserve eyes.
+	WarnLevel
+	// InfoLevel level. General operational entries about what's going on inside the
+	// application.
+	InfoLevel
+	// DebugLevel level. Usually only enabled when debugging. Very verbose logging.
+	DebugLevel
+	// TraceLevel level. Designates finer-grained informational events than the Debug.
+	TraceLevel
 )
 
 var obj *logrus.Logger = logrus.New()
@@ -31,17 +43,14 @@ var channelSwitch bool
 
 type Options struct {
 	AppName  string
-	Path     string //日志路径
-	Level    int    //输出级别
+	Path     string
+	Level    logrus.Level
 	Rotate   bool
 	KeepDays int64
 	TakeStd  bool
 }
 
 func (this *Options) New() {
-	if this.Level == 0 {
-		this.Level = INFO
-	}
 	SetLogLevel(this.Level)
 
 	if this.Path == "" {
@@ -110,21 +119,8 @@ func (this *Options) New() {
 	}
 }
 
-func SetLogLevel(level int) {
-	switch level {
-	case DEBUG:
-		obj.SetLevel(logrus.DebugLevel) // Info()、Warn()、Error()、Debug()和Fatal(),更多详细信息
-	case INFO:
-		obj.SetLevel(logrus.InfoLevel) // Info()、Warn()、Error()和Fatal()
-	case WARN:
-		obj.SetLevel(logrus.WarnLevel) // Warn()、Error()和Fatal(),更多详细信息
-	case ERROR:
-		obj.SetLevel(logrus.ErrorLevel) // Error()和Fatal(),更多详细信息
-	case FATAL:
-		obj.SetLevel(logrus.FatalLevel) // Fatal(),更多详细信息
-	default:
-		obj.SetLevel(logrus.TraceLevel) // Info()、Warn()、Error()和Fatal(),更多详细信息
-	}
+func SetLogLevel(level logrus.Level) {
+	obj.SetLevel(level)
 }
 
 func Asyn() {
@@ -134,22 +130,78 @@ func Asyn() {
 		if itemInterface != nil {
 			item := itemInterface.(map[string]interface{})
 			m := fmt.Sprint(item["Data"])
-			if item["Type"] == "Info" {
+			if item["Type"] == PanicLevel {
+				obj.WithFields(map[string]interface{}{"Func": item["Func"], "File": item["File"], "Line": item["Line"], "GID": item["GID"]}).Panic(m)
+			}
+			if item["Type"] == InfoLevel {
 				obj.WithFields(map[string]interface{}{"Func": item["Func"], "File": item["File"], "Line": item["Line"], "GID": item["GID"]}).Info(m)
 			}
-			if item["Type"] == "Debug" {
+			if item["Type"] == DebugLevel {
 				obj.WithFields(map[string]interface{}{"Func": item["Func"], "File": item["File"], "Line": item["Line"], "GID": item["GID"]}).Debug(m)
 			}
-			if item["Type"] == "Error" {
+			if item["Type"] == ErrorLevel {
 				obj.WithFields(map[string]interface{}{"Func": item["Func"], "File": item["File"], "Line": item["Line"], "GID": item["GID"]}).Error(m)
 			}
-			if item["Type"] == "Warn" {
+			if item["Type"] == WarnLevel {
 				obj.WithFields(map[string]interface{}{"Func": item["Func"], "File": item["File"], "Line": item["Line"], "GID": item["GID"]}).Warn(m)
 			}
-			if item["Type"] == "Fatal" {
+			if item["Type"] == FatalLevel {
 				obj.WithFields(map[string]interface{}{"Func": item["Func"], "File": item["File"], "Line": item["Line"], "GID": item["GID"]}).Fatal(m)
 			}
+			if item["Type"] == TraceLevel {
+				obj.WithFields(map[string]interface{}{"Func": item["Func"], "File": item["File"], "Line": item["Line"], "GID": item["GID"]}).Trace(m)
+			}
 		}
+	}
+}
+
+func Trace(o ...interface{}) {
+	m := ""
+	for _, v := range o {
+		m += fmt.Sprint(v) + " "
+	}
+
+	msg := map[string]interface{}{
+		"Type": TraceLevel,
+		"Data": m,
+	}
+
+	if obj.GetLevel() >= logrus.DebugLevel {
+		fun, file, line := printCaller()
+		msg["Func"] = fun
+		msg["File"] = file
+		msg["Line"] = line
+		msg["GID"] = getGID()
+	}
+	if channelSwitch {
+		defaultChannel.Push(msg)
+	} else {
+		obj.WithFields(map[string]interface{}{"Func": msg["Func"], "File": msg["File"], "Line": msg["Line"], "GID": msg["GID"]}).Trace(m)
+	}
+}
+
+func Panic(o ...interface{}) {
+	m := ""
+	for _, v := range o {
+		m += fmt.Sprint(v) + " "
+	}
+
+	msg := map[string]interface{}{
+		"Type": PanicLevel,
+		"Data": m,
+	}
+
+	if obj.GetLevel() >= logrus.DebugLevel {
+		fun, file, line := printCaller()
+		msg["Func"] = fun
+		msg["File"] = file
+		msg["Line"] = line
+		msg["GID"] = getGID()
+	}
+	if channelSwitch {
+		defaultChannel.Push(msg)
+	} else {
+		obj.WithFields(map[string]interface{}{"Func": msg["Func"], "File": msg["File"], "Line": msg["Line"], "GID": msg["GID"]}).Panic(m)
 	}
 }
 
@@ -160,11 +212,11 @@ func Info(o ...interface{}) {
 	}
 
 	msg := map[string]interface{}{
-		"Type": "Info",
+		"Type": InfoLevel,
 		"Data": m,
 	}
 
-	if obj.GetLevel() == logrus.DebugLevel {
+	if obj.GetLevel() >= logrus.DebugLevel {
 		fun, file, line := printCaller()
 		msg["Func"] = fun
 		msg["File"] = file
@@ -185,11 +237,11 @@ func Debug(o ...interface{}) {
 	}
 
 	msg := map[string]interface{}{
-		"Type": "Debug",
+		"Type": DebugLevel,
 		"Data": m,
 	}
 
-	if obj.GetLevel() == logrus.DebugLevel {
+	if obj.GetLevel() >= logrus.DebugLevel {
 		fun, file, line := printCaller()
 		msg["Func"] = fun
 		msg["File"] = file
@@ -210,11 +262,11 @@ func Error(o ...interface{}) {
 	}
 
 	msg := map[string]interface{}{
-		"Type": "Error",
+		"Type": ErrorLevel,
 		"Data": m,
 	}
 
-	if obj.GetLevel() == logrus.DebugLevel {
+	if obj.GetLevel() >= logrus.DebugLevel {
 		fun, file, line := printCaller()
 		msg["Func"] = fun
 		msg["File"] = file
@@ -239,11 +291,11 @@ func Warn(o ...interface{}) {
 	}
 
 	msg := map[string]interface{}{
-		"Type": "Warn",
+		"Type": WarnLevel,
 		"Data": m,
 	}
 
-	if obj.GetLevel() == logrus.DebugLevel {
+	if obj.GetLevel() >= logrus.DebugLevel {
 		fun, file, line := printCaller()
 		msg["Func"] = fun
 		msg["File"] = file
@@ -268,11 +320,11 @@ func Fatal(o ...interface{}) {
 	}
 
 	msg := map[string]interface{}{
-		"Type": "Fatal",
+		"Type": FatalLevel,
 		"Data": m,
 	}
 
-	if obj.GetLevel() == logrus.DebugLevel {
+	if obj.GetLevel() >= logrus.DebugLevel {
 		fun, file, line := printCaller()
 		msg["Func"] = fun
 		msg["File"] = file
@@ -281,17 +333,13 @@ func Fatal(o ...interface{}) {
 	}
 
 	if channelSwitch {
-		if defaultChannel.Push(msg) {
-			time.Sleep(1 * time.Second)
-			os.Exit(0)
-		}
+		defaultChannel.Push(msg)
 	} else {
 		m := ""
 		for _, v := range o {
 			m += fmt.Sprint(v) + " "
 		}
 		obj.WithFields(map[string]interface{}{"Func": msg["Func"], "File": msg["File"], "Line": msg["Line"], "GID": msg["GID"]}).Fatal(m)
-		os.Exit(0)
 	}
 }
 
