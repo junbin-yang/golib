@@ -1,10 +1,10 @@
 # logger
 
-基于github.com/sirupsen/logrus二次封装的日志模块，实现以下新功能：
+基于github.com/sirupsen/logrus二次封装，实现以下功能：
 
-1、自动分割日志文件
+1、自动分割文件
 
-2、自动清除过期日志文件
+2、自动清除过期文件
 
 3、异步写日志
 
