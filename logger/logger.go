@@ -92,7 +92,9 @@ func (this *Options) New() {
 							}
 							file_time := f.ModTime().Unix()
 							if (now_time - file_time) > diff_time {
-								os.RemoveAll(delpath)
+								if isFile(delpath) && strings.Contains(delpath, this.FileName) {
+									os.RemoveAll(delpath)
+								}
 							}
 							return nil
 						})
@@ -405,5 +407,14 @@ func (dc *DataContainer) Pop() (data interface{}) {
 		return data
 	case <-click:
 		return nil
+	}
+}
+
+func isFile(path string) bool {
+	fi, err := os.Stat(path)
+	if nil == err {
+		return !fi.IsDir()
+	} else {
+		return false
 	}
 }
