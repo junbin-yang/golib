@@ -37,7 +37,7 @@ func ObjectToJson(object interface{}, t ...string) (string, error) {
 	if e != nil {
 		return "", e
 	}
-	return string(str), nil
+	return bytesconv.BytesToString(str), nil
 }
 
 func JsonToObject(jsonString string, object interface{}, t ...string) error {
