@@ -88,7 +88,7 @@ func New(flags int) *Tree {
 }
 
 // 添加一个新节点
-func (tr *Tree) Add(label string, v interface{}) {
+func (tr *Tree) Insert(label string, v interface{}) {
 	// 不允许有空接口和空的节点数据.
 	if label == "" || v == nil {
 		return
@@ -202,7 +202,7 @@ func (tr *Tree) Add(label string, v interface{}) {
 }
 
 // 查找节点
-func (tr *Tree) Get(label string) (*Node, map[string]string) {
+func (tr *Tree) Search(label string) (*Node, map[string]string) {
 	if label == "" {
 		return nil, nil
 	}

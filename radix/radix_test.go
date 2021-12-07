@@ -8,15 +8,15 @@ import (
 func TestBinaryTree(t *testing.T) {
 	tree := BinaryRoot()
 
-	tree.Add("abc", 1)
-	tree.Add("abdd", 2)
-	tree.Add("app", 3)
-	tree.Add("ppd", 4)
-	tree.Add("abcdefg", 5)
-	tree.Add("ccd", 6)
-	tree.Add("aew", 7)
+	tree.Insert("abc", 1)
+	tree.Insert("abdd", 2)
+	tree.Insert("app", 3)
+	tree.Insert("ppd", 4)
+	tree.Insert("abcdefg", 5)
+	tree.Insert("ccd", 6)
+	tree.Insert("aew", 7)
 	tree.Sort(PrioritySort)
-	n, _ := tree.Get("app")
+	n, _ := tree.Search("app")
 	t.Log(tree, n.Value)
 }
 
@@ -30,7 +30,7 @@ func TestPrefixTree(t *testing.T) {
 		"/path/:id/user/*",
 	}
 	for i, route := range routes {
-		tree.Add(route, i)
+		tree.Insert(route, i)
 	}
 
 	requests := []string{
@@ -39,7 +39,7 @@ func TestPrefixTree(t *testing.T) {
 	}
 
 	for _, request := range requests {
-		n, v := tree.Get(request)
+		n, v := tree.Search(request)
 		t.Log(fmt.Printf("%+v ,%+v\n", n, v))
 	}
 
