@@ -40,6 +40,14 @@ func (ps Params) ByName(name string) (va string) {
 	return
 }
 
+func (ps Params) GetMap() map[string]string {
+	out := map[string]string{}
+	for _, param := range ps {
+		out[param.Key] = param.Value
+	}
+	return out
+}
+
 // 树结构定义
 type Tree struct {
 	// 根节点
