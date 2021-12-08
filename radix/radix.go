@@ -248,8 +248,7 @@ func (tr *Tree) Search(label string, params *Params, paramIndex *int) *Node {
 				// 检查是否有占位符，如果没有，则使用整个单词进行比较。
 				if i := strings.IndexByte(slice, tr.placeholder); i >= 0 {
 					phIndex = i
-				}
-				if i := strings.IndexByte(slice, '*'); i >= 0 {
+				} else if i := strings.IndexByte(slice, '*'); i >= 0 {
 					phIndex = i
 				}
 				prefix := slice[:phIndex]
