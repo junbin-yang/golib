@@ -1,4 +1,4 @@
-module radix
+module github.com/junbin-yang/golib/radix
 
 go 1.16
 
