@@ -21,7 +21,8 @@ func TestBinaryTree(t *testing.T) {
 	tree.Insert("ccd", 6)
 	tree.Insert("aew", 7)
 	tree.Sort(PrioritySort)
-	n := tree.Search("app", &Params{})
+	index := 0
+	n := tree.Search("app", &Params{}, &index)
 	t.Log(tree, n.Value)
 }
 
@@ -45,9 +46,10 @@ func TestPrefixTree(t *testing.T) {
 
 	for _, request := range requests {
 		ps := getParams()
-		n := tree.Search(request, ps)
+		index := 0
+		n := tree.Search(request, ps, &index)
 		if n != nil {
-			t.Log(n.Value, *ps)
+			t.Log(n.Value, (*ps)[:index])
 		}
 	}
 

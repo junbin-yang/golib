@@ -224,7 +224,7 @@ func (tr *Tree) Insert(label string, v interface{}) {
 }
 
 // 查找节点
-func (tr *Tree) Search(label string, params *Params) *Node {
+func (tr *Tree) Search(label string, params *Params, paramIndex *int) *Node {
 	if label == "" {
 		return nil
 	}
@@ -237,7 +237,7 @@ func (tr *Tree) Search(label string, params *Params) *Node {
 		return tnode.getBinary(label)
 	}
 
-	paramIndex := 0
+	*paramIndex = 0
 	for tnode != nil && label != "" {
 		var next *edge
 	Walk:
@@ -276,8 +276,8 @@ func (tr *Tree) Search(label string, params *Params) *Node {
 					delimIndex = len(label)
 				}
 
-				(*params)[paramIndex] = Param{key, label[:delimIndex]}
-				paramIndex++
+				(*params)[*paramIndex] = Param{key, label[:delimIndex]}
+				*paramIndex++
 
 				label = label[delimIndex:]
 				if slice == "" && label == "" {
@@ -293,7 +293,6 @@ func (tr *Tree) Search(label string, params *Params) *Node {
 		tnode = nil
 	}
 
-	*params = (*params)[:paramIndex]
 	return tnode
 }
 
