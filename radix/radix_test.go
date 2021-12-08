@@ -1,9 +1,14 @@
 package radix
 
 import (
-	"fmt"
+	//"fmt"
 	"testing"
 )
+
+func getParams() *Params {
+	ps := make(Params, 20)
+	return &ps
+}
 
 func TestBinaryTree(t *testing.T) {
 	tree := BinaryRoot()
@@ -16,7 +21,7 @@ func TestBinaryTree(t *testing.T) {
 	tree.Insert("ccd", 6)
 	tree.Insert("aew", 7)
 	tree.Sort(PrioritySort)
-	n, _ := tree.Search("app")
+	n := tree.Search("app", &Params{})
 	t.Log(tree, n.Value)
 }
 
@@ -39,8 +44,11 @@ func TestPrefixTree(t *testing.T) {
 	}
 
 	for _, request := range requests {
-		n, v := tree.Search(request)
-		t.Log(fmt.Printf("%+v ,%+v\n", n, v))
+		ps := getParams()
+		n := tree.Search(request, ps)
+		if n != nil {
+			t.Log(n.Value, *ps)
+		}
 	}
 
 }

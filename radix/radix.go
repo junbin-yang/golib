@@ -18,6 +18,28 @@ const (
 	Tnocolor
 )
 
+// 定义参数类型
+type Param struct {
+	Key   string
+	Value string
+}
+
+type Params []Param
+
+func (ps Params) Get(name string) (string, bool) {
+	for _, entry := range ps {
+		if entry.Key == name {
+			return entry.Value, true
+		}
+	}
+	return "", false
+}
+
+func (ps Params) ByName(name string) (va string) {
+	va, _ = ps.Get(name)
+	return
+}
+
 // 树结构定义
 type Tree struct {
 	// 根节点
@@ -202,9 +224,9 @@ func (tr *Tree) Insert(label string, v interface{}) {
 }
 
 // 查找节点
-func (tr *Tree) Search(label string) (*Node, map[string]string) {
+func (tr *Tree) Search(label string, params *Params) *Node {
 	if label == "" {
-		return nil, nil
+		return nil
 	}
 	if tr.safe {
 		defer tr.mu.RUnlock()
@@ -212,9 +234,10 @@ func (tr *Tree) Search(label string) (*Node, map[string]string) {
 	}
 	tnode := tr.root
 	if tr.binary {
-		return tnode.getBinary(label), nil
+		return tnode.getBinary(label)
 	}
-	var params map[string]string
+
+	paramIndex := 0
 	for tnode != nil && label != "" {
 		var next *edge
 	Walk:
@@ -252,10 +275,10 @@ func (tr *Tree) Search(label string) (*Node, map[string]string) {
 				if delimIndex = strings.IndexByte(label[1:], tr.delim) + 1; delimIndex <= 0 {
 					delimIndex = len(label)
 				}
-				if params == nil {
-					params = make(map[string]string)
-				}
-				params[key] = label[:delimIndex]
+
+				(*params)[paramIndex] = Param{key, label[:delimIndex]}
+				paramIndex++
+
 				label = label[delimIndex:]
 				if slice == "" && label == "" {
 					next = edge
@@ -269,7 +292,9 @@ func (tr *Tree) Search(label string) (*Node, map[string]string) {
 		}
 		tnode = nil
 	}
-	return tnode, params
+
+	*params = (*params)[:paramIndex]
+	return tnode
 }
 
 // Del删除节点。
