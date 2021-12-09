@@ -84,6 +84,7 @@ func BinaryRoot() *Tree {
 func PrefixRoot() *Tree {
 	t := New(0)
 	t.SetBoundaries(':', '/')
+	t.Sort(PrioritySort)
 	return t
 }
 
@@ -440,4 +441,33 @@ func (tr *Tree) String() string {
 		tr.root.writeTo(tr.bd)
 	}
 	return tr.bd.String()
+}
+
+type Strings [100]*int
+
+func NewStrings(word string) *Strings {
+	t := Strings{}
+	for i, ch := range word {
+		ch -= (rune)('a')
+		if ch < 0 {
+			ch += 100
+		}
+
+		if t[ch] == nil {
+			ii := i
+			t[ch] = &ii
+		}
+	}
+	return &t
+}
+
+func (t *Strings) IndexByte(ch rune) int {
+	ch -= (rune)('a')
+	if ch < 0 {
+		ch += 100
+	}
+	if t[ch] == nil {
+		return -1
+	}
+	return *(t[ch])
 }
