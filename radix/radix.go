@@ -283,9 +283,7 @@ func (tr *Tree) Search(label string, params *Params, paramIndex *int) *Node {
 					delimIndex = len(label)
 				}
 
-				//(*params)[*paramIndex] = Param{key, label[:delimIndex]}
-				(*params)[*paramIndex].Key = key
-				(*params)[*paramIndex].Value = label[:delimIndex]
+				(*params)[*paramIndex] = Param{key, label[:delimIndex]}
 				*paramIndex++
 
 				label = label[delimIndex:]
