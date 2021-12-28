@@ -92,7 +92,7 @@ func (this *Options) New() {
 							}
 							file_time := f.ModTime().Unix()
 							if (now_time - file_time) > diff_time {
-								if isFile(delpath) && strings.Contains(delpath, this.FileName) {
+								if isFile(delpath) && strings.Contains(delpath, this.AppName) {
 									os.RemoveAll(delpath)
 								}
 							}
