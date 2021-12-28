@@ -30,7 +30,7 @@ func main() {
      *  Rotate是否自动分割日志
      *  TakeStd是否接管Stdout和Stderr
      */
-	//(&logger.Options{AppName: "dvsobj", Path: "/var/log", Level: 2, LogRotate: true, TakeStd: true}).New()
+	//(&logger.Options{AppName: "dvsobj", Path: "/var/log", Level: 2, Rotate: true, KeepDays: 7, TakeStd: true}).New()
 
 	// AppName为空时Stdout输出，不写入文件。
 	(&logger.Options{}).New()
