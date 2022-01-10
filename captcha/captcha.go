@@ -42,7 +42,7 @@ func GenerateDefaultCaptcha(clear bool) (string, string, string, error) {
 	return GenerateCaptcha(40, 120, 4, clear)
 }
 
-func GenerateCaptcha(height, width, length int, clear bool) (string, string, string) {
+func GenerateCaptcha(height, width, length int, clear bool) (string, string, string, error) {
 	var driver = NewDriver(height, width, length).ConvertFonts()
 	c := base64Captcha.NewCaptcha(driver, store)
 	id, b64s, err := c.Generate()
