@@ -1,10 +1,9 @@
 package redisx
 
 import (
+	"github.com/junbin-yang/redis-go-cluster"
 	"log"
 	"time"
-
-	"github.com/vinllen/redis-go-cluster"
 )
 
 type Cluster struct {
