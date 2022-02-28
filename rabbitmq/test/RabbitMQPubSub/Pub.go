@@ -2,7 +2,7 @@ package main
 
 import (
 	"fmt"
-	MQ "golib/rabbitmq"
+	MQ "github.com/junbin-yang/golib/rabbitmq"
 	"strconv"
 	"time"
 )
