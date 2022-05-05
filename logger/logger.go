@@ -349,7 +349,7 @@ func Fatal(o ...interface{}) {
 
 func printCaller() (string, string, int) {
 	var pcs [32]uintptr
-	n := runtime.Callers(2, pcs[:])
+	n := runtime.Callers(3, pcs[:])
 	frames := runtime.CallersFrames(pcs[:n])
 	frame, _ := frames.Next()
 	return frame.Function, frame.File, frame.Line
