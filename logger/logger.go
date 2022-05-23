@@ -76,12 +76,19 @@ func (this *Options) New() {
 			}
 
 			if this.Rotate {
-				go func(Path, AppName string) {
+				go func(Path, AppName string, src *os.File) {
 					c := cron.New()
 					c.AddFunc("0 0 0 * * ?", func() {
+						src.Close()
 						logfile := Path + "/" + AppName + "-" + carbon.Now().ToDateString() + ".log"
-						src, _ := os.OpenFile(logfile, os.O_APPEND|os.O_WRONLY|os.O_CREATE, os.ModeAppend|0644)
+						src, _ = os.OpenFile(logfile, os.O_APPEND|os.O_WRONLY|os.O_CREATE, os.ModeAppend|0644)
 						obj.SetOutput(src)
+						if this.TakeStd {
+							os.Stderr = src
+							os.Stdout = src
+							syscall.Dup3(int(src.Fd()), 2, 0)
+							syscall.Dup3(int(src.Fd()), 1, 0)
+						}
 
 						var diff_time int64 = 3600 * 24 * this.KeepDays
 						now_time := time.Now().Unix()
@@ -104,7 +111,7 @@ func (this *Options) New() {
 					})
 					c.Start()
 					select {}
-				}(this.Path, this.AppName)
+				}(this.Path, this.AppName, src)
 			}
 		} else {
 			fmt.Println("打开日志文件失败:", err)
